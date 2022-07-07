@@ -1,81 +1,140 @@
 #include <iostream>
-#define N 9
 using namespace std;
-int grid[N][N] = {
-   {3, 0, 6, 5, 0, 8, 4, 0, 0},
-   {5, 2, 0, 0, 0, 0, 0, 0, 0},
-   {0, 8, 7, 0, 0, 0, 0, 3, 1},
-   {0, 0, 3, 0, 1, 0, 0, 8, 0},
-   {9, 0, 0, 8, 6, 3, 0, 0, 5},
-   {0, 5, 0, 0, 9, 0, 6, 0, 0},
-   {1, 3, 0, 0, 0, 0, 2, 5, 0},
-   {0, 0, 0, 0, 0, 0, 0, 7, 4},
-   {0, 0, 5, 2, 0, 6, 3, 0, 0}
-};
-bool isPresentInCol(int col, int num){ //check whether num is present in col or not
-   for (int row = 0; row < N; row++)
-      if (grid[row][col] == num)
-         return true;
-   return false;
+
+char square[10] = {'o','1','2','3','4','5','6','7','8','9'};
+
+int checkwin();
+void board();
+
+int main()
+{
+	int player = 1,i,choice;
+
+    char mark;
+    do
+    {
+        board();
+        player=(player%2)?1:2;
+
+        cout << "Player " << player << ", enter a number:  ";
+        cin >> choice;
+
+        mark=(player == 1) ? 'X' : 'O';
+
+        if (choice == 1 && square[1] == '1')
+
+            square[1] = mark;
+        else if (choice == 2 && square[2] == '2')
+
+            square[2] = mark;
+        else if (choice == 3 && square[3] == '3')
+
+            square[3] = mark;
+        else if (choice == 4 && square[4] == '4')
+
+            square[4] = mark;
+        else if (choice == 5 && square[5] == '5')
+
+            square[5] = mark;
+        else if (choice == 6 && square[6] == '6')
+
+            square[6] = mark;
+        else if (choice == 7 && square[7] == '7')
+
+            square[7] = mark;
+        else if (choice == 8 && square[8] == '8')
+
+            square[8] = mark;
+        else if (choice == 9 && square[9] == '9')
+
+            square[9] = mark;
+        else
+        {
+            cout<<"Invalid move ";
+
+            player--;
+            cin.ignore();
+            cin.get();
+        }
+        i=checkwin();
+
+        player++;
+    }while(i==-1);
+    board();
+    if(i==1)
+
+        cout<<"==>\aPlayer "<<--player<<" win ";
+    else
+        cout<<"==>\aGame draw";
+
+    cin.ignore();
+    cin.get();
+    return 0;
 }
-bool isPresentInRow(int row, int num){ //check whether num is present in row or not
-   for (int col = 0; col < N; col++)
-      if (grid[row][col] == num)
-         return true;
-   return false;
+
+/*********************************************
+    FUNCTION TO RETURN GAME STATUS
+    1 FOR GAME IS OVER WITH RESULT
+    -1 FOR GAME IS IN PROGRESS
+    O GAME IS OVER AND NO RESULT
+**********************************************/
+
+int checkwin()
+{
+    if (square[1] == square[2] && square[2] == square[3])
+
+        return 1;
+    else if (square[4] == square[5] && square[5] == square[6])
+
+        return 1;
+    else if (square[7] == square[8] && square[8] == square[9])
+
+        return 1;
+    else if (square[1] == square[4] && square[4] == square[7])
+
+        return 1;
+    else if (square[2] == square[5] && square[5] == square[8])
+
+        return 1;
+    else if (square[3] == square[6] && square[6] == square[9])
+
+        return 1;
+    else if (square[1] == square[5] && square[5] == square[9])
+
+        return 1;
+    else if (square[3] == square[5] && square[5] == square[7])
+
+        return 1;
+    else if (square[1] != '1' && square[2] != '2' && square[3] != '3' 
+                    && square[4] != '4' && square[5] != '5' && square[6] != '6' 
+                  && square[7] != '7' && square[8] != '8' && square[9] != '9')
+
+        return 0;
+    else
+        return -1;
 }
-bool isPresentInBox(int boxStartRow, int boxStartCol, int num){
-//check whether num is present in 3x3 box or not
-   for (int row = 0; row < 3; row++)
-      for (int col = 0; col < 3; col++)
-         if (grid[row+boxStartRow][col+boxStartCol] == num)
-            return true;
-   return false;
-}
-void sudokuGrid(){ //print the sudoku grid after solve
-   for (int row = 0; row < N; row++){
-      for (int col = 0; col < N; col++){
-         if(col == 3 || col == 6)
-            cout << " | ";
-         cout << grid[row][col] <<" ";
-      }
-      if(row == 2 || row == 5){
-         cout << endl;
-         for(int i = 0; i<N; i++)
-            cout << "---";
-      }
-      cout << endl;
-   }
-}
-bool findEmptyPlace(int &row, int &col){ //get empty location and update row and column
-   for (row = 0; row < N; row++)
-      for (col = 0; col < N; col++)
-         if (grid[row][col] == 0) //marked with 0 is empty
-            return true;
-   return false;
-}
-bool isValidPlace(int row, int col, int num){
-   //when item not found in col, row and current 3x3 box
-   return !isPresentInRow(row, num) && !isPresentInCol(col, num) && !isPresentInBox(row - row%3 ,
-col - col%3, num);
-}
-bool solveSudoku(){
-   int row, col;
-   if (!findEmptyPlace(row, col))
-      return true; //when all places are filled
-   for (int num = 1; num <= 9; num++){ //valid numbers are 1 - 9
-      if (isValidPlace(row, col, num)){ //check validation, if yes, put the number in the grid
-         grid[row][col] = num;
-         if (solveSudoku()) //recursively go for other rooms in the grid
-            return true;
-         grid[row][col] = 0; //turn to unassigned space when conditions are not satisfied
-      }
-   }
-   return false;
-}
-int main(){
-   if (solveSudoku() == true)
-      sudokuGrid();
-   else
-      cout << "No solution exists";
+
+
+void board()
+{
+    system("cls");
+    cout << "\n\n\tTic Tac Toe\n\n";
+
+    cout << "Player 1 (X)  -  Player 2 (O)" << endl << endl;
+    cout << endl;
+
+    cout << "     |     |     " << endl;
+    cout << "  " << square[1] << "  |  " << square[2] << "  |  " << square[3] << endl;
+
+    cout << "_____|_____|_____" << endl;
+    cout << "     |     |     " << endl;
+
+    cout << "  " << square[4] << "  |  " << square[5] << "  |  " << square[6] << endl;
+
+    cout << "_____|_____|_____" << endl;
+    cout << "     |     |     " << endl;
+
+    cout << "  " << square[7] << "  |  " << square[8] << "  |  " << square[9] << endl;
+
+    cout << "     |     |     " << endl << endl;
 }
