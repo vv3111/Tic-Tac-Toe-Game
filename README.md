@@ -1,2 +1,2 @@
-# Sudoku-Solver
-Sudoko Solver created using C++ &amp; Backtracking algorithm.
+# Tic-Tac-Toe-Game
+Tic-Tac-Toe-Game created using C++.
